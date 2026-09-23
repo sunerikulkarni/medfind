@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const Pharmacy = require("../models/Pharmacy");
 const generateToken = require("../utils/generateToken");
+const { notify } = require("./notificationController");
 
 const sanitizeUser = (doc) => {
   const obj = doc.toObject();
@@ -73,6 +74,19 @@ const registerPharmacy = async (req, res, next) => {
     });
 
     const token = generateToken(pharmacy._id, "pharmacy");
+
+    const admins = await User.find({ role: "admin" }).select("_id");
+    await Promise.all(
+      admins.map((admin) =>
+        notify({
+          recipientType: "User",
+          recipient: admin._id,
+          title: "New pharmacy awaiting verification",
+          message: `${pharmacyName} registered and is pending verification.`,
+        })
+      )
+    );
+
     res.status(201).json({
       token,
       user: sanitizeUser(pharmacy),

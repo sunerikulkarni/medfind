@@ -91,7 +91,7 @@ a:hover { color: var(--primary-dark); text-decoration: underline; }
 }
 .navbar-inner {
   max-width: 1200px; margin: 0 auto;
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; gap: var(--space-5);
   padding: var(--space-3) var(--space-5);
 }
 .brand {
@@ -119,12 +119,89 @@ a:hover { color: var(--primary-dark); text-decoration: underline; }
   border: 1px solid var(--line-strong); padding: 7px 14px; border-radius: var(--radius-sm);
   position: relative; font-weight: 600; color: var(--ink);
 }
-.unread-dot {
-  background: var(--amber); color: #fff; border-radius: 999px;
-  padding: 1px 7px; font-size: 0.68rem; margin-left: 6px; font-weight: 700;
-}
 .menu-toggle { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; padding: 8px; }
 .menu-toggle span { width: 20px; height: 2px; background: var(--ink); border-radius: 1px; }
+
+/* Groups the bell and hamburger together at the right edge of the header,
+   independent of whether nav-links is inline (desktop) or a hidden
+   dropdown (mobile) — so the bell is always visible either way. */
+.navbar-actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+
+/* ---------------------------- Notification bell ---------------------------- */
+.notification-wrapper { position: relative; }
+.notification-bell {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 999px; border: 1px solid transparent;
+  background: transparent; color: var(--ink-muted); cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.notification-bell:hover { background: var(--surface-sunken); color: var(--ink); }
+.notification-bell[aria-expanded="true"] { background: var(--primary-tint); color: var(--primary-dark); }
+.notification-badge {
+  position: absolute; top: 2px; right: 2px; min-width: 17px; height: 17px;
+  padding: 0 4px; border-radius: 999px; background: var(--amber); color: #fff;
+  font-size: 0.65rem; font-weight: 800; line-height: 17px; text-align: center;
+  border: 2px solid var(--surface);
+}
+
+.notification-panel {
+  position: absolute; top: calc(100% + 10px); right: 0; width: 340px; max-width: calc(100vw - 32px);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised); z-index: 30; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.notification-panel-header {
+  padding: var(--space-3) var(--space-4); font-weight: 800; font-size: 0.95rem;
+  border-bottom: 1px solid var(--line);
+}
+.notification-list-wrap { max-height: 360px; overflow-y: auto; }
+.notification-empty { padding: var(--space-5) var(--space-4); text-align: center; color: var(--ink-muted); font-size: 0.88rem; }
+.notification-list { list-style: none; margin: 0; padding: 0; }
+.notification-item { border-bottom: 1px solid var(--line); }
+.notification-item:last-child { border-bottom: none; }
+.notification-item-btn {
+  width: 100%; display: flex; align-items: flex-start; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4); background: none; border: none; text-align: left;
+  cursor: pointer; font-family: inherit;
+}
+.notification-item.unread .notification-item-btn { background: var(--primary-tint); cursor: pointer; }
+.notification-item:not(.unread) .notification-item-btn { cursor: default; }
+.notification-item-btn:hover { background: var(--surface-sunken); }
+.notification-item.unread .notification-item-btn:hover { background: #d8ece8; }
+.notification-dot {
+  flex-shrink: 0; width: 8px; height: 8px; border-radius: 999px; margin-top: 6px;
+  background: var(--line-strong);
+}
+.notification-item.unread .notification-dot { background: var(--primary); }
+.notification-item-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.notification-item-title { font-weight: 700; font-size: 0.88rem; color: var(--ink); }
+.notification-item-message { font-size: 0.84rem; color: var(--ink-muted); }
+.notification-item-date { font-size: 0.74rem; color: var(--ink-faint); margin-top: 2px; }
+.notification-panel-footer {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3); border-top: 1px solid var(--line); background: var(--surface-sunken);
+}
+.notification-link-btn {
+  background: none; border: none; color: var(--primary); font-weight: 700; font-size: 0.82rem;
+  cursor: pointer; padding: 6px 8px; border-radius: var(--radius-sm); font-family: inherit;
+}
+.notification-link-btn:hover { background: var(--primary-tint); text-decoration: none; }
+.notification-link-btn:disabled { color: var(--ink-faint); cursor: not-allowed; }
+
+/* ---------------------------- Full notifications page ---------------------------- */
+.notifications-page-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap; }
+.notifications-page-header h1 { margin: 0; }
+.notifications-full-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.notifications-full-item {
+  display: flex; align-items: flex-start; gap: var(--space-3);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4); box-shadow: var(--shadow-card);
+}
+.notifications-full-item.unread { background: var(--primary-tint); border-color: #bfe0da; }
+.notifications-full-item .notification-dot { margin-top: 8px; }
+.notifications-full-body { flex: 1; min-width: 0; }
+.notifications-full-top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+.notifications-full-body p.notification-item-message { margin: 4px 0 0; max-width: none; }
 
 /* ---------------------------- Buttons ---------------------------- */
 .btn {
@@ -431,12 +508,4 @@ input, select, textarea, button { font-size: 16px; font-family: inherit; }
 @media (max-width: 380px) {
   .stats-row { grid-template-columns: 1fr; }
   .brand { font-size: 1.05rem; }
-}
-.mock-card-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #0f6e64;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 12px;
 }

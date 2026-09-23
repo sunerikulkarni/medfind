@@ -35,4 +35,18 @@ const markRead = async (req, res, next) => {
   }
 };
 
-module.exports = { notify, listNotifications, markRead };
+// PUT /api/notifications/read-all
+const markAllRead = async (req, res, next) => {
+  try {
+    const recipientType = req.user.role === "pharmacy" ? "Pharmacy" : "User";
+    await Notification.updateMany(
+      { recipient: req.user.id, recipientType, isRead: false },
+      { $set: { isRead: true } }
+    );
+    res.json({ message: "All notifications marked as read." });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { notify, listNotifications, markRead, markAllRead };

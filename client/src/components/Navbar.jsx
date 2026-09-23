@@ -1,23 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import api from "../services/api";
+import NotificationBell from "./NotificationBell";
 
 const Navbar = () => {
   const { user, role, logout } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [unread, setUnread] = useState(0);
-
-  useEffect(() => {
-    if (!user) return;
-    let mounted = true;
-    api
-      .get("/notifications")
-      .then(({ data }) => mounted && setUnread(data.unreadCount))
-      .catch(() => {});
-    return () => (mounted = false);
-  }, [user]);
 
   const dashboardPath =
     role === "admin" ? "/admin" : role === "pharmacy" ? "/pharmacy" : "/dashboard";
@@ -34,12 +23,6 @@ const Navbar = () => {
           MedFind
         </Link>
 
-        <button className="menu-toggle" onClick={() => setMenuOpen((o) => !o)} aria-label="Toggle menu">
-          <span />
-          <span />
-          <span />
-        </button>
-
         <nav className={`nav-links ${menuOpen ? "open" : ""}`}>
           <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
           <Link to="/find-medicine" onClick={() => setMenuOpen(false)}>Find Medicine</Link>
@@ -49,7 +32,7 @@ const Navbar = () => {
           {user ? (
             <>
               <Link to={dashboardPath} onClick={() => setMenuOpen(false)} className="nav-cta-secondary">
-                Dashboard {unread > 0 && <span className="unread-dot">{unread}</span>}
+                Dashboard
               </Link>
               <button className="nav-cta" onClick={handleLogout}>Logout</button>
             </>
@@ -60,6 +43,20 @@ const Navbar = () => {
             </>
           )}
         </nav>
+
+        <div className="navbar-actions">
+          <NotificationBell />
+          <button
+            className="menu-toggle"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+        </div>
       </div>
     </header>
   );

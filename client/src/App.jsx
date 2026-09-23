@@ -12,6 +12,7 @@ import Pharmacies from "./pages/Pharmacies";
 import PharmacyDetails from "./pages/PharmacyDetails";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import Notifications from "./pages/Notifications";
 
 import PatientDashboard from "./pages/PatientDashboard";
 import RequestHistory from "./pages/RequestHistory";
@@ -41,6 +42,7 @@ function App() {
         <Route path="/pharmacies" element={<Pharmacies />} />
         <Route path="/pharmacies/:id" element={<PharmacyDetails />} />
         <Route path="/about" element={<About />} />
+        <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
 
         <Route path="/dashboard" element={<ProtectedRoute allow={["patient"]}><PatientDashboard /></ProtectedRoute>} />
         <Route path="/requests" element={<ProtectedRoute allow={["patient"]}><RequestHistory /></ProtectedRoute>} />

@@ -39,6 +39,14 @@ const createRequest = async (req, res, next) => {
       relatedRequest: request._id,
     });
 
+    await notify({
+      recipientType: "User",
+      recipient: req.user.id,
+      title: "Request submitted",
+      message: `Your request for ${medicine.name} has been submitted and is pending confirmation.`,
+      relatedRequest: request._id,
+    });
+
     res.status(201).json({ request });
   } catch (err) {
     next(err);
@@ -148,11 +156,16 @@ const updateStatus = async (req, res, next) => {
 
     await session.commitTransaction();
 
+    // Populated after the transaction commits so it never touches the
+    // session/transaction path above — read-only, no effect on stock logic.
+    await request.populate("medicine", "name");
+    const medicineName = request.medicine?.name || "your medicine";
+
     const notifMap = {
-      CONFIRMED: "Your request was confirmed by the pharmacy.",
-      REJECTED: "Your request was rejected by the pharmacy.",
-      COMPLETED: "Your request has been completed.",
-      CANCELLED: "The request was cancelled.",
+      CONFIRMED: `Your request for ${medicineName} was confirmed by the pharmacy.`,
+      REJECTED: `Your request for ${medicineName} was rejected by the pharmacy.`,
+      COMPLETED: `Your request for ${medicineName} has been completed.`,
+      CANCELLED: `The request for ${medicineName} was cancelled.`,
     };
     const recipientType = isPharmacy ? "User" : "Pharmacy";
     const recipient = isPharmacy ? request.user : request.pharmacy;
@@ -176,7 +189,7 @@ const updateStatus = async (req, res, next) => {
 // DELETE /api/requests/:id  (patient cancels a still-pending request)
 const cancelRequest = async (req, res, next) => {
   try {
-    const request = await MedicineRequest.findById(req.params.id);
+    const request = await MedicineRequest.findById(req.params.id).populate("medicine", "name");
     if (!request) return res.status(404).json({ message: "Request not found." });
     if (request.user.toString() !== req.user.id) {
       return res.status(403).json({ message: "You can only cancel your own requests." });
@@ -186,6 +199,15 @@ const cancelRequest = async (req, res, next) => {
     }
     request.status = "CANCELLED";
     await request.save();
+
+    await notify({
+      recipientType: "Pharmacy",
+      recipient: request.pharmacy,
+      title: "Request cancelled",
+      message: `The request for ${request.medicine?.name || "a medicine"} was cancelled by the patient.`,
+      relatedRequest: request._id,
+    });
+
     res.json({ request });
   } catch (err) {
     next(err);
