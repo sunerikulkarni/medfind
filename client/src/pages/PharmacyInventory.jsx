@@ -116,8 +116,16 @@ const PharmacyInventory = () => {
                   <td data-label="Price">₹{m.price}</td>
                   <td data-label="Expiry">{new Date(m.expiryDate).toLocaleDateString()}{expired && " (expired)"}</td>
                   <td data-label="Status">
-                    {m.manuallyUnavailable ? "Marked unavailable" : expired ? "Expired" : lowStock ? "Low stock" : "Available"}
-                  </td>
+  {m.manuallyUnavailable
+    ? "Marked unavailable"
+    : expired
+    ? "Expired"
+    : m.quantity === 0
+    ? "Out of stock"
+    : lowStock
+    ? "Low stock"
+    : "Available"}
+</td>
                   <td data-label="Actions" className="actions-cell">
                     <button className="btn btn-outline small" onClick={() => editMedicine(m)}>Edit</button>
                     <button className="btn btn-outline small" onClick={() => toggleUnavailable(m)}>
