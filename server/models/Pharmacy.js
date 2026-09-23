@@ -35,7 +35,6 @@ const pharmacySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-pharmacySchema.index({ email: 1 });
 pharmacySchema.index({ "location.lat": 1, "location.lng": 1 });
 pharmacySchema.index({ verificationStatus: 1 });
 

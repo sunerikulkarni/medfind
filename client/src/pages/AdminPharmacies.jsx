@@ -14,29 +14,48 @@ const AdminPharmacies = () => {
   const [pharmacies, setPharmacies] = useState([]);
   const [filter, setFilter] = useState("PENDING");
 
-  const load = () => api.get("/admin/pharmacies").then(({ data }) => setPharmacies(data.pharmacies));
-  useEffect(load, []);
+  const load = () =>
+    api
+      .get("/admin/pharmacies")
+      .then(({ data }) => setPharmacies(data.pharmacies));
 
-  const approve = async (id) => { await api.put(`/admin/pharmacies/${id}/approve`); load(); };
+  useEffect(() => {
+    load();
+  }, []);
+
+  const approve = async (id) => {
+    await api.put(`/admin/pharmacies/${id}/approve`);
+    load();
+  };
+
   const reject = async (id) => {
     const reason = window.prompt("Reason for rejection:") || undefined;
     await api.put(`/admin/pharmacies/${id}/reject`, { reason });
     load();
   };
+
   const suspend = async (id) => {
     if (!window.confirm("Suspend this pharmacy?")) return;
     await api.put(`/admin/pharmacies/${id}/suspend`);
     load();
   };
 
-  const visible = filter ? pharmacies.filter((p) => p.verificationStatus === filter) : pharmacies;
+  const visible = filter
+    ? pharmacies.filter((p) => p.verificationStatus === filter)
+    : pharmacies;
 
   return (
     <div className="dashboard-layout">
       <Sidebar title="Admin" links={links} />
+
       <main className="dashboard-content">
         <h1>Pharmacies</h1>
-        <select value={filter} onChange={(e) => setFilter(e.target.value)} className="filter-select">
+
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="filter-select"
+        >
           <option value="">All</option>
           <option value="PENDING">Pending</option>
           <option value="APPROVED">Approved</option>
@@ -46,8 +65,16 @@ const AdminPharmacies = () => {
 
         <table className="data-table">
           <thead>
-            <tr><th>Name</th><th>Owner</th><th>License</th><th>Address</th><th>Status</th><th>Actions</th></tr>
+            <tr>
+              <th>Name</th>
+              <th>Owner</th>
+              <th>License</th>
+              <th>Address</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
           </thead>
+
           <tbody>
             {visible.map((p) => (
               <tr key={p._id}>
@@ -55,21 +82,48 @@ const AdminPharmacies = () => {
                 <td data-label="Owner">{p.ownerName}</td>
                 <td data-label="License">{p.licenseNumber}</td>
                 <td data-label="Address">{p.address}</td>
-                <td data-label="Status"><StatusBadge status={p.verificationStatus} /></td>
+                <td data-label="Status">
+                  <StatusBadge status={p.verificationStatus} />
+                </td>
+
                 <td data-label="Actions" className="actions-cell">
                   {p.verificationStatus === "PENDING" && (
                     <>
-                      <button className="btn btn-primary small" onClick={() => approve(p._id)}>Approve</button>
-                      <button className="btn btn-outline small danger" onClick={() => reject(p._id)}>Reject</button>
+                      <button
+                        className="btn btn-primary small"
+                        onClick={() => approve(p._id)}
+                      >
+                        Approve
+                      </button>
+
+                      <button
+                        className="btn btn-outline small danger"
+                        onClick={() => reject(p._id)}
+                      >
+                        Reject
+                      </button>
                     </>
                   )}
+
                   {p.verificationStatus === "APPROVED" && (
-                    <button className="btn btn-outline small danger" onClick={() => suspend(p._id)}>Suspend</button>
+                    <button
+                      className="btn btn-outline small danger"
+                      onClick={() => suspend(p._id)}
+                    >
+                      Suspend
+                    </button>
                   )}
                 </td>
               </tr>
             ))}
-            {visible.length === 0 && <tr><td colSpan={6} className="muted">No pharmacies in this category.</td></tr>}
+
+            {visible.length === 0 && (
+              <tr>
+                <td colSpan={6} className="muted">
+                  No pharmacies in this category.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </main>
