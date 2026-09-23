@@ -13,7 +13,11 @@ const getProfile = async (req, res, next) => {
     if (req.user.role !== "patient") {
       return res.status(403).json({ message: "Only patient accounts have this profile type." });
     }
-    res.json({ user: sanitize(req.user.doc) });
+    const user = await User.findById(req.user.id).populate(
+      "savedPharmacies",
+      "pharmacyName address phone verificationStatus location operatingHours"
+    );
+    res.json({ user: sanitize(user) });
   } catch (err) {
     next(err);
   }

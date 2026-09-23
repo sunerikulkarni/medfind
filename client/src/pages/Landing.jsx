@@ -2,17 +2,50 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Landing = () => (
-  <div className="page landing">
+  <div className="landing">
     <section className="hero">
-      <h1>Find the medicine you need, near you.</h1>
-      <p className="subtitle">
-        MedFind connects you with verified nearby pharmacies so you can check real-time
-        medicine availability before you travel, and submit a reservation request in a few taps.
-      </p>
-      <div className="hero-actions">
-        <Link to="/find-medicine" className="btn btn-primary">Find Medicine</Link>
-        <Link to="/register-pharmacy" className="btn btn-outline">Register as Pharmacy</Link>
+      <div className="hero-copy">
+        <h1>Find the medicine you need, near you.</h1>
+        <p className="subtitle">
+          MedFind connects you with verified nearby pharmacies so you can check real-time
+          medicine availability before you travel, and submit a reservation request in a few taps.
+        </p>
+        <div className="hero-actions">
+          <Link to="/find-medicine" className="btn btn-primary">Find Medicine</Link>
+          <Link to="/register-pharmacy" className="btn btn-outline">Register as Pharmacy</Link>
+        </div>
+        <div className="hero-trust">
+          <span className="hero-trust-item">Every pharmacy is admin-verified</span>
+          <span className="hero-trust-item">Live stock, not a static directory</span>
+          <span className="hero-trust-item">Search without creating an account</span>
+        </div>
       </div>
+
+      <div className="hero-visual">
+  <div className="mock-card" aria-hidden="true">
+    <div className="mock-card-label">Example result</div>
+
+    <div className="mock-card-search">Paracetamol 500mg</div>
+
+    <div className="mock-result">
+      <div className="mock-result-top">
+        <span className="mock-result-name">Verified Pharmacy</span>
+        <span className="mock-result-dist">0.8 km</span>
+      </div>
+      <span className="mock-result-meta">Nearby · Open now</span>
+      <span className="mock-pill ok">In stock</span>
+    </div>
+
+    <div className="mock-result">
+      <div className="mock-result-top">
+        <span className="mock-result-name">Nearby Pharmacy</span>
+        <span className="mock-result-dist">2.1 km</span>
+      </div>
+      <span className="mock-result-meta">Nearby · Open now</span>
+      <span className="mock-pill low">Low stock</span>
+    </div>
+  </div>
+</div>
     </section>
 
     <section className="features">

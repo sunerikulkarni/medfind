@@ -13,6 +13,7 @@ const PharmacyDetails = () => {
   const [medicines, setMedicines] = useState([]);
   const [error, setError] = useState("");
   const [requestTarget, setRequestTarget] = useState(null);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     api
@@ -23,6 +24,23 @@ const PharmacyDetails = () => {
       })
       .catch((err) => setError(err.response?.data?.message || "Pharmacy not found."));
   }, [id]);
+
+  useEffect(() => {
+    if (role !== "patient") return;
+    api.get("/users/profile").then(({ data }) => {
+      const ids = (data.user.savedPharmacies || []).map((p) => p._id || p);
+      setSaved(ids.includes(id));
+    });
+  }, [id, role]);
+
+  const toggleSave = async () => {
+    if (!user || role !== "patient") {
+      navigate("/login");
+      return;
+    }
+    await api.put(`/users/saved-pharmacies/${id}`);
+    setSaved((s) => !s);
+  };
 
   const submitRequest = async ({ quantity, note, urgency }) => {
     if (!user || role !== "patient") {
@@ -62,7 +80,14 @@ const PharmacyDetails = () => {
         Hours: {pharmacy.operatingHours?.open} – {pharmacy.operatingHours?.close} ·{" "}
         {pharmacy.isOpenNow ? "Open now" : "Closed now"}
       </p>
-      <a className="btn btn-outline small" href={`tel:${pharmacy.phone}`}>Call Pharmacy</a>
+      <div className="result-actions">
+        <a className="btn btn-outline small" href={`tel:${pharmacy.phone}`}>Call Pharmacy</a>
+        {role === "patient" && (
+          <button className="btn btn-outline small" onClick={toggleSave}>
+            {saved ? "Unsave" : "Save Pharmacy"}
+          </button>
+        )}
+      </div>
 
       <h2>Available Medicines</h2>
       <div className="results-grid">

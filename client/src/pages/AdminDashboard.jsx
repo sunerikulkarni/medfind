@@ -6,6 +6,7 @@ const links = [
   { to: "/admin", label: "Overview", end: true },
   { to: "/admin/pharmacies", label: "Pharmacies" },
   { to: "/admin/users", label: "Users" },
+  { to: "/admin/requests", label: "Requests / Reports" },
 ];
 
 const AdminDashboard = () => {

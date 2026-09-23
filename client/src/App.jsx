@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import PatientDashboard from "./pages/PatientDashboard";
 import RequestHistory from "./pages/RequestHistory";
 import PatientProfile from "./pages/PatientProfile";
+import SavedPharmacies from "./pages/SavedPharmacies";
 
 import PharmacyDashboard from "./pages/PharmacyDashboard";
 import PharmacyInventory from "./pages/PharmacyInventory";
@@ -25,6 +26,7 @@ import PharmacyProfile from "./pages/PharmacyProfile";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminPharmacies from "./pages/AdminPharmacies";
 import AdminUsers from "./pages/AdminUsers";
+import AdminRequests from "./pages/AdminRequests";
 
 function App() {
   return (
@@ -42,6 +44,7 @@ function App() {
 
         <Route path="/dashboard" element={<ProtectedRoute allow={["patient"]}><PatientDashboard /></ProtectedRoute>} />
         <Route path="/requests" element={<ProtectedRoute allow={["patient"]}><RequestHistory /></ProtectedRoute>} />
+        <Route path="/saved-pharmacies" element={<ProtectedRoute allow={["patient"]}><SavedPharmacies /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute allow={["patient"]}><PatientProfile /></ProtectedRoute>} />
 
         <Route path="/pharmacy" element={<ProtectedRoute allow={["pharmacy"]}><PharmacyDashboard /></ProtectedRoute>} />
@@ -52,6 +55,7 @@ function App() {
         <Route path="/admin" element={<ProtectedRoute allow={["admin"]}><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/pharmacies" element={<ProtectedRoute allow={["admin"]}><AdminPharmacies /></ProtectedRoute>} />
         <Route path="/admin/users" element={<ProtectedRoute allow={["admin"]}><AdminUsers /></ProtectedRoute>} />
+        <Route path="/admin/requests" element={<ProtectedRoute allow={["admin"]}><AdminRequests /></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
